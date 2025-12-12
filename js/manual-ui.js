@@ -2936,4 +2936,14 @@
     initOssTableToggle();
   }
 
+  // GA4: ハッシュ変更時にページビューを送信
+  window.addEventListener('hashchange', function() {
+    if (typeof gtag === 'function') {
+      gtag('event', 'page_view', {
+        page_path: location.pathname + location.hash,
+        page_title: document.title
+      });
+    }
+  });
+
 })(); // EOF
