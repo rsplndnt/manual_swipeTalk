@@ -1783,10 +1783,12 @@ ul.spec-list li{
 }
 
 /* TOC（左） */
-.toc{ 
-  padding: 12px; 
+.toc{
+  padding: 12px;
   /* スクロールバー表示時の改行を防ぐため右側に余裕を持たせる */
   padding-right: 16px;
+  /* トグル展開時に下部が隠れないよう余白を確保 */
+  padding-bottom: 120px;
 }
 .toc .toc-section{ margin-bottom: 12px; position: relative; }
 .toc .toc-section h3{ 
