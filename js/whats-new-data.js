@@ -7,7 +7,7 @@ const whatsNewData = [
     badgeClass: "",
     title: "バージョン1.1の改善",
     modalTitle: "",
-    manualTitle: "バージョン1.1 更新内容",
+    manualTitle: "バージョン1.1",
     contents: [
       {
         heading: "安定性の向上",
@@ -21,7 +21,7 @@ const whatsNewData = [
     badgeClass: "",
     title: "初版リリース",
     modalTitle: "",
-    manualTitle: "バージョン1.0 更新内容",
+    manualTitle: "バージョン1.0",
     contents: [
       {
         heading: "初版リリース",
