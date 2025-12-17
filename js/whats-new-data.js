@@ -1,6 +1,6 @@
 
 // バージョン表示範囲（この範囲内のバージョンのみ表示）
-const VERSION_RANGE = { min: "1.0", max: "1.1" };
+const VERSION_RANGE = { min: "1.0", max: "1.2" };
 
 // 全バージョンの新着情報データ
 const _allWhatsNewData = [
