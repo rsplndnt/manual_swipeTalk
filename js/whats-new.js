@@ -295,7 +295,7 @@ class WhatsNewManager {
       <div class="whats-new-modal-body-content">
         <div class="modal-news-header">
           <span class="news-item-date">${item.date}</span>
-          <span class="news-item-badge ${item.badgeClass}">${item.badge}</span>
+          <span class="news-item-badge">v${item.version}</span>
         </div>
         <h2 class="modal-news-title">${item.title}</h2>
         <div class="modal-news-content">
@@ -474,7 +474,7 @@ class WhatsNewManager {
         <button class="modal-date-list-item" data-index="${index}">
           <div class="modal-date-list-item-header">
             <span class="news-item-date">${item.date}</span>
-            <span class="news-item-badge ${item.badgeClass}">${item.badge}</span>
+            <span class="news-item-badge">v${item.version}</span>
           </div>
           <div class="modal-date-list-item-title">${item.title}</div>
           ${item.contents.length > 1 ? `<span class="modal-date-list-item-count">${item.contents.length}件のコンテンツ</span>` : ''}
