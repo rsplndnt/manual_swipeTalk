@@ -32,8 +32,9 @@ class WhatsNewManager {
     pageData.forEach((item, index) => {
       const globalIndex = start + index;
 
+      const versionId = `whats-new-v${item.version.replace('.', '-')}`;
       html += `
-        <div class="news-item-wrapper">
+        <div class="news-item-wrapper" id="${versionId}">
           <h2 class="news-item-title">${item.manualTitle || item.title}</h2>
           <article class="news-item" data-index="${globalIndex}" data-content-index="0">
             <div class="news-item-content">
@@ -592,9 +593,10 @@ function generateWhatsNewTocList() {
   const tocList = document.getElementById('whats-new-toc-list');
   if (!tocList || typeof whatsNewData === 'undefined') return;
 
-  tocList.innerHTML = whatsNewData.map(item =>
-    `<li><a class="toc-sublink" href="#whats-new" data-group-id="whats-new-items">v${item.version}</a></li>`
-  ).join('');
+  tocList.innerHTML = whatsNewData.map(item => {
+    const versionId = `whats-new-v${item.version.replace('.', '-')}`;
+    return `<li><a class="toc-sublink" href="#${versionId}" data-group-id="whats-new-items">v${item.version}</a></li>`;
+  }).join('');
 }
 
 // DOMContentLoaded後に初期化
