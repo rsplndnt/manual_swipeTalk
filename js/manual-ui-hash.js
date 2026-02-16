@@ -726,13 +726,10 @@
       if (sectionElement) {
         const sectionId = sectionElement.id;
         if (sectionId) {
-          // まずセクションを表示
-          activateSection(`#${sectionId}`, { scrollToTop: false });
+          // まずセクションを表示（URLはscrollToElementNoAnimで更新するのでここでは更新しない）
+          activateSection(`#${sectionId}`, { scrollToTop: false, updateUrl: false });
 
-          // URLを更新（GA4/Clarityに通知）
-          updateUrlHash(href, { replace: false });
-
-          // 画像読み込みを待ってからスクロール
+          // 画像読み込みを待ってからスクロール（ここでURLも更新される）
           setTimeout(() => {
             scrollToElementNoAnim(`#${targetId}`);
           }, 100);
@@ -1311,9 +1308,10 @@
               activateSection(sectionHash, {
                 scrollToTop: false,
                 parentHasActiveChild: true,
-                activeSubHash: anchor
+                activeSubHash: anchor,
+                updateUrl: false  // URLはscrollToElementで更新するのでここでは更新しない
               });
-              
+
               // 画像読み込みを待ってからスクロール
               setTimeout(() => scrollToElement(anchor), 150);
               if (window.innerWidth <= MOBILE_BREAKPOINT) closeMobileSidebar();
@@ -1783,6 +1781,11 @@
           });
         }
       }
+
+      // hashchangeが発火しない場合に備えてフラグをリセット（少し遅延させる）
+      setTimeout(() => {
+        isPopstateNavigation = false;
+      }, 50);
     });
     
     // ページトップに戻るボタンの初期化
