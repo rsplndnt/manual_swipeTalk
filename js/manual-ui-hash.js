@@ -60,10 +60,16 @@
     const pathValue = pathForAnalytics.startsWith('/') ? pathForAnalytics : `/${pathForAnalytics}`;
 
     try {
-      if (window.location.hash === hashValue && !replace) return;
+      console.log('[updateUrlHash] called with:', hash, 'replace:', replace, 'current hash:', window.location.hash);
+      if (window.location.hash === hashValue && !replace) {
+        console.log('[updateUrlHash] early return - same hash');
+        return;
+      }
       if (replace) {
+        console.log('[updateUrlHash] using replace');
         window.location.replace(hashValue);
       } else {
+        console.log('[updateUrlHash] adding to history:', hashValue);
         window.location.hash = hashValue;
       }
       // GA4/Clarity用にパス形式でページビューイベントを送信
@@ -746,8 +752,10 @@
 
     // ブラウザの戻る/進むボタン対応（hashchangeイベント）
     window.addEventListener('hashchange', function(e) {
+      console.log('[hashchange] fired, newURL:', e.newURL, 'oldURL:', e.oldURL, 'isPopstateNavigation:', isPopstateNavigation);
       // popstate経由の場合はスキップ（popstateハンドラーで処理済み）
       if (isPopstateNavigation) {
+        console.log('[hashchange] skipped due to isPopstateNavigation');
         isPopstateNavigation = false;
         return;
       }
@@ -1193,7 +1201,14 @@
       const state = loadTocOpenState();
       const getGroupIdByHash = (hash) => {
         if (!hash) return null;
-        if (hash === '#top') return 'sub-items-top';
+        // パス形式（/xxx）をハッシュ形式（#xxx）に変換
+        let normalized = hash;
+        if (hash.startsWith('/')) {
+          normalized = '#' + hash.slice(1);
+        } else if (!hash.startsWith('#')) {
+          normalized = '#' + hash;
+        }
+        if (normalized === '#top') return 'sub-items-top';
         // 新しいID形式に対応
         const idMap = {
           '#account-setup': 'account-setup-items',
@@ -1204,7 +1219,7 @@
           '#faq': 'faq-items',
           '#product-specs': 'product-specs-items'
         };
-        return idMap[hash] || null;
+        return idMap[normalized] || null;
       };
 
       tocLinks.forEach(link => {
@@ -1279,8 +1294,18 @@
             na.addEventListener('click', (e) => {
               e.preventDefault();
               e.stopPropagation();
-              const anchor = na.getAttribute('href');
+              let anchor = na.getAttribute('href');
+              console.log('[TOC sublink click] original anchor:', anchor);
               if (!anchor) return;
+
+              // パス形式（/xxx）をアンカー形式（#xxx）に変換
+              if (anchor.startsWith('/')) {
+                anchor = '#' + anchor.slice(1);
+              } else if (!anchor.startsWith('#')) {
+                anchor = '#' + anchor;
+              }
+              console.log('[TOC sublink click] converted anchor:', anchor);
+
               // 対象セクションを特定して切替（右カラムと同様の挙動）
               let sectionHash = '#top';
               const anchorEl = document.querySelector(anchor);
@@ -1313,6 +1338,7 @@
               });
 
               // 画像読み込みを待ってからスクロール
+              console.log('[TOC sublink click] calling scrollToElement after 150ms:', anchor);
               setTimeout(() => scrollToElement(anchor), 150);
               if (window.innerWidth <= MOBILE_BREAKPOINT) closeMobileSidebar();
             });
@@ -1555,7 +1581,13 @@
 
     function activateSection(targetHash, opts = {}) {
       if (!targetHash) return;
-      const normalizedTarget = targetHash.trim();
+      // パス形式（/xxx）をハッシュ形式（#xxx）に変換
+      let normalizedTarget = targetHash.trim();
+      if (normalizedTarget.startsWith('/')) {
+        normalizedTarget = '#' + normalizedTarget.slice(1);
+      } else if (!normalizedTarget.startsWith('#')) {
+        normalizedTarget = '#' + normalizedTarget;
+      }
       let activeSubHash = opts.activeSubHash || null;
       if (!activeSubHash && forcedTocState.sectionHash === normalizedTarget && forcedTocState.subHash) {
         activeSubHash = forcedTocState.subHash;
@@ -1594,7 +1626,14 @@
 
     function scrollToElement(hash) {
       if (!hash) return;
-      const el = document.querySelector(hash);
+      // パス形式（/xxx）をハッシュ形式（#xxx）に変換
+      let normalizedHash = hash;
+      if (hash.startsWith('/')) {
+        normalizedHash = '#' + hash.slice(1);
+      } else if (!hash.startsWith('#')) {
+        normalizedHash = '#' + hash;
+      }
+      const el = document.querySelector(normalizedHash);
       if (!el) return;
       const offset = getScrollOffset();
       const container = document.querySelector('.manual-content');
@@ -1625,14 +1664,21 @@
         }, 350); // スクロールアニメーション完了後
       }
 
-      updateUrlHash(hash);
+      updateUrlHash(normalizedHash);
     }
 
     // スクロールアニメーションなしで瞬時に目的位置へ移動
     function scrollToElementNoAnim(hash, docRef) {
       const doc = docRef || document;
       if (!hash) return;
-      const el = doc.querySelector(hash);
+      // パス形式（/xxx）をハッシュ形式（#xxx）に変換
+      let normalizedHash = hash;
+      if (hash.startsWith('/')) {
+        normalizedHash = '#' + hash.slice(1);
+      } else if (!hash.startsWith('#')) {
+        normalizedHash = '#' + hash;
+      }
+      const el = doc.querySelector(normalizedHash);
       if (!el) return;
       // オフセット（ヘッダ等）
       const tabs = doc.querySelector('.content-tabs');
@@ -1670,7 +1716,7 @@
             }, 1200);
           }, 50);
         }
-        updateUrlHash(hash);
+        updateUrlHash(normalizedHash);
       }
     }
 
@@ -1703,6 +1749,7 @@
     
     // ブラウザの戻る/進むボタン対応
     window.addEventListener('popstate', function(e) {
+      console.log('[popstate] fired, hash:', window.location.hash, 'state:', e.state);
       // hashchangeイベントでの重複処理を防ぐためフラグを設定
       isPopstateNavigation = true;
 
