@@ -20,6 +20,9 @@
   const SIDEBAR_WIDTH_KEY = 'mb-manual-sidebar-width';
   const MOBILE_BREAKPOINT = 1024;
 
+  // popstate経由のナビゲーションかどうかを追跡するフラグ
+  let isPopstateNavigation = false;
+
   /* ===== 01) utilities ===== */
   function debounce(fn, wait = 160) {
     let t = null;
@@ -746,6 +749,12 @@
 
     // ブラウザの戻る/進むボタン対応（hashchangeイベント）
     window.addEventListener('hashchange', function(e) {
+      // popstate経由の場合はスキップ（popstateハンドラーで処理済み）
+      if (isPopstateNavigation) {
+        isPopstateNavigation = false;
+        return;
+      }
+
       const hash = window.location.hash;
       if (!hash || hash === '#' || hash === '#top') {
         activateSection('#top', { scrollToTop: true, updateUrl: false });
@@ -1696,6 +1705,9 @@
     
     // ブラウザの戻る/進むボタン対応
     window.addEventListener('popstate', function(e) {
+      // hashchangeイベントでの重複処理を防ぐためフラグを設定
+      isPopstateNavigation = true;
+
       try {
         const hash = window.location.hash;
         
