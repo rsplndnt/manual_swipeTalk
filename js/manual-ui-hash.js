@@ -1626,8 +1626,8 @@
           }, 1200);
         }, 350); // スクロールアニメーション完了後
       }
-      
-      updateUrlHash(hash, { replace: true });
+
+      updateUrlHash(hash);
     }
 
     // スクロールアニメーションなしで瞬時に目的位置へ移動
@@ -1672,7 +1672,7 @@
             }, 1200);
           }, 50);
         }
-        updateUrlHash(hash, { replace: true });
+        updateUrlHash(hash);
       }
     }
 
@@ -2553,9 +2553,9 @@
             }, 350);
           }
 
-          // URLのアンカーも更新（置換）
+          // URLのアンカーも更新
           if (anchorId) {
-            updateUrlHash(`#${anchorId}`, { replace: true });
+            updateUrlHash(`#${anchorId}`);
           }
         });
       });
