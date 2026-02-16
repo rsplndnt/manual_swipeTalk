@@ -12,79 +12,64 @@ const _allWhatsNewData = [
     manualTitle: "バージョン1.2",
     contents: [
       {
-        heading: "チーム機能の追加",
-        text: "複数人で同じシートをリアルタイムで共有・編集できる「チームモード」が追加されました。トランスクリプトやキャンバスを複数人で同時に利用できます。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-team-mode.png",
-        link: "/operation-guide#team-mode"
-      },
-      {
-        heading: "使用時間制限の導入",
-        text: "トランスクリプト機能の月間使用時間制限が導入されました。アカウント画面で残り時間を確認でき、上限に近づくと警告が表示されます。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-usage-limit.png",
-        link: "/product-specs#usage-limits"
+        heading: "キーボード入力モードの追加",
+        text: "音声入力に加え、キーボードからテキストを入力してしゃべり描きができるようになりました。<span class=\"button-label\">設定</span>から入力方式を<span class=\"button-label\">キーボード入力</span>に切り替えて使用します。",
+        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-keyboard-input.png",
+        link: "/use-swipe-talk"
       },
       {
         heading: "テキストのみ消去できる消しゴム機能",
-        text: "画像や手描きの線を残したまま、音声入力で配置したテキストだけを消すことができるようになりました。新しい「テキスト消しゴム」ツールをご利用ください。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-text-eraser.png"
+        text: "画像保護消しゴムを追加しました。写真や図面はそのまま残し、文字やお絵描きのみを選択的に消去できます。",
+        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-eraser-protect.png",
+        link: "/edit-elements"
       },
       {
-        heading: "シート管理の改善（11枚目以降のアーカイブ）",
-        text: "11枚目のシートを作成すると、古いシートが自動的にアーカイブされます。アーカイブされたシートは「シート管理」メニューから確認・復元できます。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-sheet-archive.png"
+        heading: "表示切替機能の追加",
+        text: "キャンバスとトランスクリプトの表示モードを切り替えられるようになりました。並列表示・キャンバスのみ表示・トランスクリプトのみ表示の3モードから選択できます。",
+        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-view-switch.png",
+        link: "/canvas-area"
       },
       {
-        heading: "PDFドキュメントのキャンバス対応",
-        text: "PDFファイルをキャンバスに直接読み込めるようになりました。画像と同様に、PDFに描き込みや翻訳テキストを追加できます。技術文書や図面での利用に便利です。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-pdf-support.png"
+        heading: "シート管理の改善（100枚対応）",
+        text: "保持できるシートの上限を10枚から100枚に拡張しました。100枚に達した場合、最終更新日が古いシートから非表示になります。",
+        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-sheet-100.png",
+        link: "/create-new-sheet"
       },
       {
-        heading: "トランスクリプト音声入力の改善",
-        text: "短文ごとに区切って入力できるようになりました。より自然な会話の記録が可能です。発話の区切りを自動的に検出し、読みやすい形式で表示します。"
+        heading: "設定メニューの追加",
+        text: "しゃべり描きの入力方式（音声入力／キーボード入力）や文字サイズを設定画面から変更できるようになりました。",
+        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-settings.png",
+        link: "/canvas-area"
       },
       {
-        heading: "しゃべり描き®音声読み上げ機能",
-        text: "キャンバス上のテキストを音声で読み上げられるようになりました。視覚と聴覚の両方でコミュニケーションを支援します。",
-        link: "/operation-guide#canvas-features"
+        heading: "キャンバス画像の保存機能",
+        text: "シート管理エリアから、開いているシートのキャンバスエリアをPNG画像として保存できるようになりました。",
+        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-canvas-export.png",
+        link: "/export-canvas"
       },
       {
-        heading: "トランスクリプト音声読み上げ機能",
-        text: "トランスクリプトの会話内容を音声で読み上げられるようになりました。会話の流れを音声で確認できるため、より自然なコミュニケーションが可能です。",
-        link: "/operation-guide#transcript-features"
+        heading: "しゃべり描き文字の編集機能",
+        text: "キャンバス上のしゃべり描き文字をダブルタップしてテキストを直接編集できるようになりました。編集後、翻訳文・折り返し翻訳文も自動で更新されます。",
+        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-text-edit.png",
+        link: "/edit-elements"
       },
       {
-        heading: "画像・PDFファイルサイズ上限の拡張",
-        text: "より大きなファイルをアップロードできるようになりました。高解像度の画像や複雑なPDF文書も扱えるようになり、より多様な用途に対応します。"
+        heading: "画像ストレージ上限の通知",
+        text: "画像の枚数が増えてストレージがいっぱいになった場合、通知が表示されるようになりました。シートから画像を削除するとストレージが空き、新しい画像を貼り付けられます。"
       },
       {
-        heading: "初期起動時の言語設定ポップアップ",
-        text: "初回起動時に翻訳言語を設定するガイドが表示されます。初めての方でも迷わず設定できるようになりました。",
-        link: "/getting-started#initial-setup"
+        heading: "トランスクリプトの吹き出し区切り操作",
+        text: "発話内容が長い場合、一呼吸置くか、マイクボタンをダブルクリック・ダブルタップすることで、吹き出しを区切って翻訳できるようになりました。"
       },
       {
-        heading: "トランスクリプトのテキスト取得機能",
-        text: "トランスクリプトの会話内容をテキストファイルとしてダウンロードできるようになりました。会話の記録を外部で活用できます。",
-        link: "/operation-guide#transcript-export"
+        heading: "音声入力非対応言語の明示",
+        text: "一部の言語が音声入力に対応していない旨を、言語選択画面に明示しました。対応言語は製品仕様の翻訳言語一覧をご確認ください。",
+        link: "/supported-languages"
       },
       {
-        heading: "サポート対象外環境の警告表示",
-        text: "非推奨ブラウザやOSでアクセスした際に警告が表示されます。最適な環境でのご利用をサポートします。"
-      },
-      {
-        heading: "リリース内容の通知機能追加",
-        text: "新機能や更新内容をモーダルで確認できるようになりました。"
-      },
-      {
-        heading: "キャンバスのタッチパッド操作対応",
-        text: "タッチパッドでの上下スクロールに対応しました。"
-      },
-      {
-        heading: "シートタイトル機能の改善",
-        text: "より使いやすいタイトル編集機能に改善されました。"
-      },
-      {
-        heading: "翻訳表示の高速化（しゃべり描き）",
-        text: "しゃべり描き機能の応答待ち時間が短縮されました。"
+        heading: "トランスクリプトCSV保存機能",
+        text: "トランスクリプトの内容をCSV UTF-8形式で書き出し、ブラウザのダウンロード機能で保存できるようになりました。",
+        link: "/export-canvas"
       }
     ]
   },
