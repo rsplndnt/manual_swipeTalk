@@ -65,6 +65,12 @@
             display: none !important;
         }
 
+        /* 新規追加コンテンツの緑色表示（後で削除予定） */
+        .new-content,
+        .new-content * {
+            color: #2e7d32 !important;
+        }
+
         /* インラインスタイルは削除 - CSSファイルで管理 */
     </style>
     
@@ -777,10 +783,10 @@
                                                     </div>
                                                 </div>
                                             </li>
-                                            <li>
-                                                <div style="color: #2e7d32;">
-                                                    <strong style="color: #2e7d32;">トランスクリプト削除ボタン</strong>
-                                                    <p style="color: #2e7d32;">トランスクリプトの１つの吹き出しを削除できます。</p>
+                                            <li class="new-content">
+                                                <div>
+                                                    <strong>トランスクリプト削除ボタン</strong>
+                                                    <p>トランスクリプトの１つの吹き出しを削除できます。</p>
                                                 </div>
                                             </li>
                                         </ol>
@@ -1437,7 +1443,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="step-with-subsection" style="color: #2e7d32;">
+                            <div class="step-with-subsection new-content">
                                 <h5 class="step-subsection-title">C. トランスクリプトの吹き出しを削除する</h5>
                                 <div class="step-with-image">
                                     <div class="step-image">
@@ -1461,7 +1467,7 @@
                                     <h5>ワンポイントアドバイス</h5>
                                     <ul class="advice-list">
                                         <li class="advice-item">
-                                            <span>...から<span class="button-label">トランスクリプトを全削除</span>を押すと、キャンバスの内容を残したまま、トランスクリプトをすべて削除できます</span>
+                                            <span><span class="button-label">...</span>から<span class="button-label">トランスクリプトを全削除</span>を押すと、キャンバスの内容を残したまま、トランスクリプトをすべて削除できます</span>
                                         </li>
                                     </ul>
                                 </div>
@@ -1545,7 +1551,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            <div class="step-with-subsection" style="color: #2e7d32;">
+                            <div class="step-with-subsection new-content">
                                 <h5 class="step-subsection-title">B. トランスクリプトを書き出す</h5>
                                 <div class="step-with-image">
                                     <div class="step-image">
@@ -2850,7 +2856,7 @@
                 </ul>
             </div>
             <div id="whats-new-items" class="sub-items-group">
-                <h4>8. 更新履歴</h4>
+                <h4>8. 1</h4>
                 <ul>
                     <li><a href="/whats-new" title="更新履歴">更新履歴</a></li>
                 </ul>
