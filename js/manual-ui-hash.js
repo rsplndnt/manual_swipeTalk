@@ -65,16 +65,21 @@
         console.log('[updateUrlHash] early return - same hash');
         return;
       }
+
+      // history.pushState/replaceStateを使用して履歴を明示的に管理
+      const newUrl = window.location.pathname + window.location.search + hashValue;
       if (replace) {
-        console.log('[updateUrlHash] using replace');
-        window.location.replace(hashValue);
+        console.log('[updateUrlHash] using replaceState:', hashValue);
+        history.replaceState({ hash: hashValue }, '', newUrl);
       } else {
-        console.log('[updateUrlHash] adding to history:', hashValue);
-        window.location.hash = hashValue;
+        console.log('[updateUrlHash] using pushState:', hashValue);
+        history.pushState({ hash: hashValue }, '', newUrl);
       }
+
       // GA4/Clarity用にパス形式でページビューイベントを送信
       sendPageView(pathValue);
     } catch (_) {
+      // フォールバック: history APIが使えない場合は従来の方法を使用
       try {
         window.location.hash = hashValue;
       } catch (__) {}
@@ -87,7 +92,9 @@
     const pathValue = pathForAnalytics ? (pathForAnalytics.startsWith('/') ? pathForAnalytics : `/${pathForAnalytics}`) : '/';
 
     try {
-      window.location.replace(hashValue);
+      // history.replaceStateを使用してURLを更新（履歴エントリは追加しない）
+      const newUrl = window.location.pathname + hashValue;
+      history.replaceState({ hash: hashValue }, '', newUrl);
       sendPageView(pathValue);
     } catch (_) {
       try {
@@ -748,6 +755,9 @@
     const initialHandledByHash = !initialHandledByTarget && handleInitialHash();
     if (!initialHandledByTarget && !initialHandledByHash) {
       activateSection('#top', { scrollToTop: false, updateUrl: false });
+      // 初期状態の履歴エントリを設定（戻るボタン対応のため）
+      const initialHash = window.location.hash || '#top';
+      history.replaceState({ hash: initialHash }, '', window.location.pathname + window.location.search + initialHash);
     }
 
     // ブラウザの戻る/進むボタン対応（hashchangeイベント）
@@ -1754,7 +1764,12 @@
       isPopstateNavigation = true;
 
       try {
-        const hash = window.location.hash;
+        // URLのハッシュを優先し、なければstateオブジェクトから取得
+        let hash = window.location.hash;
+        if (!hash && e.state && e.state.hash) {
+          hash = e.state.hash;
+          console.log('[popstate] using hash from state:', hash);
+        }
         
         console.log('[popstate] hash value:', hash);
         if (hash) {
@@ -1808,18 +1823,24 @@
             }
           } else {
             console.log('[popstate] targetElement NOT found for hash:', hash);
+            // 要素が見つからない場合、セクションIDとして試行
+            const sectionElement = sections.find(s => `#${s.id}` === hash);
+            if (sectionElement) {
+              activateSection(hash, {
+                updateUrl: false,
+                scrollToTop: true,
+                closeMobile: false
+              });
+            }
           }
         } else {
-          console.log('[popstate] no hash, showing first section');
-          // ハッシュがない場合は最初のセクションを表示
-          const firstSection = sections[0];
-          if (firstSection) {
-            activateSection(`#${firstSection.id}`, {
-              updateUrl: false,
-              scrollToTop: true,
-              closeMobile: false
-            });
-          }
+          console.log('[popstate] no hash, showing #top section');
+          // ハッシュがない場合または空の場合は#topを表示
+          activateSection('#top', {
+            updateUrl: false,
+            scrollToTop: true,
+            closeMobile: false
+          });
         }
       } catch (error) {
         console.error('Error in popstate handler:', error);
