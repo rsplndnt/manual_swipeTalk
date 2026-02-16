@@ -1756,9 +1756,11 @@
       try {
         const hash = window.location.hash;
         
+        console.log('[popstate] hash value:', hash);
         if (hash) {
           // ハッシュから要素を探す（サブセクションの可能性もある）
           const targetElement = document.querySelector(hash);
+          console.log('[popstate] targetElement found:', !!targetElement);
           
           if (targetElement) {
             // 要素が見つかった場合、その親のセクションを探す
@@ -1767,35 +1769,35 @@
             if (parentSection) {
               // 親セクションのIDを取得
               const sectionId = `#${parentSection.id}`;
-              
+              console.log('[popstate] found parentSection:', sectionId, 'scrolling to:', hash);
+
               // セクション切り替え（URLは更新しない）
               activateSection(sectionId, {
                 updateUrl: false,  // 重要：無限ループを防ぐ
                 scrollToTop: false, // スクロール位置は後で調整
                 closeMobile: false
               });
-              
-              // サブセクションへスクロール（少し遅延を入れて確実に）
+
+              // サブセクションへスクロール（scrollToElementNoAnimを使用、URLは更新しない）
               setTimeout(() => {
                 const targetEl = document.querySelector(hash);
                 if (targetEl) {
                   const container = document.querySelector('.manual-content');
                   if (container) {
-                    const containerTop = container.getBoundingClientRect().top;
-                    const targetTop = targetEl.getBoundingClientRect().top;
-                    const scrollTop = container.scrollTop;
-                    const offset = targetTop - containerTop + scrollTop - 20; // 20pxの余白
-                    
-                    container.scrollTo({
-                      top: offset,
-                      behavior: 'smooth'
-                    });
+                    const offset = getScrollOffset();
+                    const cRect = container.getBoundingClientRect();
+                    const eRect = targetEl.getBoundingClientRect();
+                    const target = container.scrollTop + (eRect.top - cRect.top) - offset;
+                    container.scrollTop = Math.max(0, target);
+                    console.log('[popstate] scrolled to element:', hash);
                   }
                 }
               }, 100);
             } else {
               // セクション自体の場合
+              console.log('[popstate] no parentSection, checking if it is a section itself');
               const sectionElement = sections.find(s => `#${s.id}` === hash);
+              console.log('[popstate] sectionElement found:', !!sectionElement);
               if (sectionElement) {
                 activateSection(hash, {
                   updateUrl: false,
@@ -1804,8 +1806,11 @@
                 });
               }
             }
+          } else {
+            console.log('[popstate] targetElement NOT found for hash:', hash);
           }
         } else {
+          console.log('[popstate] no hash, showing first section');
           // ハッシュがない場合は最初のセクションを表示
           const firstSection = sections[0];
           if (firstSection) {
