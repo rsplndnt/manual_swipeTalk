@@ -542,24 +542,26 @@
                                                 </div>
                                             </li>
                                             <li>
-                                                <div>
-                                                    <strong><a href="/transcript-area">表示切替</a></strong>
-                                                    <p>トランスクリプトエリアの表示・非表示を切り替えます。</p>
-                                                </div>
-                                                <img src="https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-layout-header-4.jpg"
-                                                    alt="表示切替" loading="lazy" class="feature-image" style="width: 100%; max-width: none; height: auto; margin: 1rem 0;">
-                                                <div>
-                                                    <div class="feature-detail">
-                                                        <h6>並列表示</h6>
-                                                        <p>キャンバスとトランスクリプトを並べて表示します。画面の幅が狭いときは選択できません。</p>
+                                                <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                                                    <div style="flex: 1;">
+                                                        <strong><a href="/transcript-area">表示切替</a></strong>
+                                                        <p>トランスクリプトエリアの表示・非表示を切り替えます。</p>
+                                                        <div class="feature-detail">
+                                                            <h6>並列表示</h6>
+                                                            <p>キャンバスとトランスクリプトを並べて表示します。画面の幅が狭いときは選択できません。</p>
+                                                        </div>
+                                                        <div class="feature-detail">
+                                                            <h6>キャンバス表示</h6>
+                                                            <p>キャンバスエリアのみを表示します。</p>
+                                                        </div>
+                                                        <div class="feature-detail">
+                                                            <h6>トランスクリプト表示</h6>
+                                                            <p>トランスクリプトエリアのみを表示します。</p>
+                                                        </div>
                                                     </div>
-                                                    <div class="feature-detail">
-                                                        <h6>キャンバス表示</h6>
-                                                        <p>キャンバスエリアのみを表示します。</p>
-                                                    </div>
-                                                    <div class="feature-detail">
-                                                        <h6>トランスクリプト表示</h6>
-                                                        <p>トランスクリプトエリアのみを表示します。</p>
+                                                    <div style="flex: 1;">
+                                                        <img src="https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-layout-header-4.jpg"
+                                                            alt="表示切替" loading="lazy" class="feature-image" style="width: 100%; height: auto;">
                                                     </div>
                                                 </div>
                                             </li>
@@ -638,7 +640,7 @@
                                                     </div>
                                                     <div class="feature-detail">
                                                         <h6>消しゴム</h6>
-                                                        <p>描いた線や文字を消すことができます。</p>
+                                                        <p>描いた線や文字を消すことができます。通常の消しゴムと、画像以外の文字・お絵描きのみを消せる画像保護消しゴムがあります。</p>
                                                     </div>
                                                 </div>
                                             </li>
@@ -699,7 +701,7 @@
                                     </div>
                                 </div>
                                 <div class="step-text advice-section">
-                                    <h5>キャンバスの操作1</h5>
+                                    <h5>キャンバスの操作</h5>
                                     <div class="operation-grid">
                                         <div class="operation-card">
                                             <h6>スクロール上下</h6>
@@ -755,30 +757,32 @@
                                             <li>
                                                 <div>
                                                     <strong><a href="/use-transcript">トランスクリプトマイクボタン</a></strong>
+                                                    <p>このボタンを押すと、音声認識が開始され、話した内容がトランスクリプトエリアにテキストとしてリアルタイムに記録されます。</p>
                                                 </div>
                                             </li>
                                             <li>
                                                 <div>
                                                     <strong><a href="/select-language">言語選択ボタン</a></strong>
-                                                    <p>しゃべり描きとトランスクリプトで使用する言語を選択します。</p>
+                                                    <p>しゃべり描きとトランスクリプトで使用する言語を選択します。現在選択されている言語設定が表示されます。言語の変更は、キャンバスエリアの言語選択ボタンから行えます。</p>
                                                 </div>
                                             </li>
                                             <li>
                                                 <div>
                                                     <strong><a href="/use-transcript">トランスクリプト文字（入力文・翻訳文・折り返し翻訳）</a></strong>
-                                                    <p>音声入力した内容が時系列で記録されます。</p>
+                                                    <p>音声入力した内容が時系列で記録され、会話を記録として残せます。以下の3種類の文字が表示されます：</p>
                                                     <div class="feature-detail">
                                                         <h6>入力文</h6>
-                                                        <p>入力元の言語の文章</p>
+                                                        <p>入力した認識された元の言語の文章</p>
                                                     </div>
                                                     <div class="feature-detail">
                                                         <h6>翻訳文</h6>
-                                                        <p>相手の言語への翻訳結果</p>
+                                                        <p>相手の選択した言語への翻訳結果</p>
                                                     </div>
                                                     <div class="feature-detail">
                                                         <h6>折り返し翻訳文</h6>
-                                                        <p>翻訳文を入力元の言語に再翻訳した結果</p>
+                                                        <p>翻訳文を入力元の言語に再翻訳した結果（翻訳の精度確認に便利）</p>
                                                     </div>
+                                                    <p>キャンバスエリアとは別に、会話の記録として残すことができます。</p>
                                                 </div>
                                             </li>
                                             <li class="new-content">
@@ -879,7 +883,7 @@
                                             <h5>⚠ 注意</h5>
 
                                             <ul>
-                                                <li>シートは最大10枚までしか作成できません。作成済みのシートが10枚に達した状態で新しいシートを作成した場合、最終更新日が古いシートから非表示になり、アクセスできません。</li>
+                                                <li>シートは最大100枚までしか作成できません。作成済みのシートが100枚に達した状態で新しいシートを作成した場合、最終更新日が古いシートから非表示になり、アクセスできません。</li>
                                             </ul>
                                         </aside>
                                     </div>
@@ -1020,15 +1024,6 @@
                                                     alt="しゃべり描き®のコツ" loading="lazy">
                                             </div>
                                         </li>
-                                        <li class="advice-item">
-                                            <span>しゃべり描き®を途中でキャンセルしたい場合は、しゃべり描き®マイクボタンを再度押すか、ツールパレットのいずれかのボタンを押します。</span>
-                                        </li>
-                                        <li class="advice-item">
-                                            <span>しゃべり描き®の色を選択したい場合はツールパレットの<span class="button-label">●</span>を押します。</span>
-                                        </li>
-                                        <li class="advice-item">
-                                            <span>しゃべり描き®のサイズを変更したい場合は<span class="button-label button-label--lg">A</span><span class="button-label">A</span>のいずれかを選択します。</span>
-                                        </li>
                                     </ul>
                                 </div>
                                 </div>
@@ -1069,6 +1064,20 @@
                                         <div class="step-text">
                                             <p>B-4. <br>キャンバスの任意の場所をマウス・指でなぞると、文字が表示されます。<br>入力文が表示されたあと、翻訳文・折り返し翻訳文が順次表示されます。</p>
                                         </div>
+                                    </div>
+                                    <div class="step-text advice-section">
+                                        <h5>ワンポイントアドバイス</h5>
+                                        <ul class="advice-list">
+                                            <li class="advice-item">
+                                                <span>しゃべり描き®を途中でキャンセルしたい場合は、しゃべり描き®マイクボタンを再度押すか、ツールパレットのいずれかのボタンを押します。</span>
+                                            </li>
+                                            <li class="advice-item">
+                                                <span>しゃべり描き®の色を選択したい場合はツールパレットの<span class="button-label">●</span>を押します。</span>
+                                            </li>
+                                            <li class="advice-item">
+                                                <span>しゃべり描き®のサイズを変更したい場合は<span class="button-label button-label--lg">A</span><span class="button-label">A</span>のいずれかを選択します。</span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -1150,17 +1159,6 @@
                                         </li>
                                         <li class="advice-item">
                                             <span>片方の言語のトランスクリプトマイクが有効のときに、もう一方の言語のトランスクリプトマイクを押すと、あとから押したほうのマイクが有効になり、素早く認識言語を切り替えられます。</span>
-                                            <div class="advice-image-with-src">
-                                                <img src="https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-usage-transcript-point-1.png"
-                                                    alt="トランスクリプトのコツ" loading="lazy">
-                                            </div>
-                                        </li>
-                                        <li class="advice-item">
-                                            <span>吹き出し右の<span class="button-label">再生</span>ボタンを押すと、吹き出しの内容が音声で再生されます。</span>
-                                            <div class="advice-image-with-src">
-                                                <img src="https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-usage-transcript-point-2.jpg"
-                                                    alt="吹き出し音声再生" loading="lazy">
-                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -1314,15 +1312,15 @@
                                             <p>C-1.
                                                 <br>クリップボードに画像をコピーし、アプリ画面のウィンドウを開いた状態で[Ctrl]+[V]を押すと、コピーした画像がキャンバスの中央に配置されます。
                                             </p>
-                                            <aside class="note-card" role="note">
-                                                <h5>⚠ 注意</h5>
-                                                <ul>
-                                                    <li>使用する画像の枚数が増え、ストレージがいっぱいで画像が貼り付けられなくなる場合があります。シートから画像を削除するとストレージが空き、新しい画像を貼り付けられるようになります。</li>
-                                                </ul>
-                                            </aside>
                                         </div>
                                     </div>
                                 </div>
+                                <aside class="note-card" role="note" style="margin-left: 0;">
+                                    <h5>⚠ 注意</h5>
+                                    <ul>
+                                        <li>使用する画像の枚数が増え、ストレージがいっぱいで画像が貼り付けられなくなる場合があります。シートから画像を削除するとストレージが空き、新しい画像を貼り付けられるようになります。</li>
+                                    </ul>
+                                </aside>
                             </div>
                         </div>
 
@@ -1419,7 +1417,7 @@
                                             alt="要素削除手順" loading="lazy">
                                     </div>
                                     <div class="step-text">
-                                        <p>B-1-1. <br>ツールパレット内の<span class="button-label">消しゴム</span>ボタンを選択します。</p>
+                                        <p>1. <br>ツールパレット内の<span class="button-label">消しゴム</span>ボタンを選択します。</p>
                                     </div>
                                 </div>
                                 <div class="step-with-image">
@@ -1428,7 +1426,7 @@
                                             alt="要素削除手順2" loading="lazy">
                                     </div>
                                     <div class="step-text">
-                                        <p>B-1-2. <br>消去したい要素に触れると、要素が削除されます。</p>
+                                        <p>2. <br>消去したい要素に触れると、要素が削除されます。</p>
                                     </div>
                                 </div>
                             </div>
@@ -1440,7 +1438,7 @@
                                             alt="画像保護消しゴム手順1" loading="lazy">
                                     </div>
                                     <div class="step-text">
-                                        <p>B-2-1. <br>ツールパレット内の<span class="button-label">画像保護消しゴム</span>ボタンを選択します。</p>
+                                        <p>1. <br>ツールパレット内の<span class="button-label">画像保護消しゴム</span>ボタンを選択します。</p>
                                     </div>
                                 </div>
                                 <div class="step-with-image">
@@ -1449,7 +1447,7 @@
                                             alt="画像保護消しゴム手順2" loading="lazy">
                                     </div>
                                     <div class="step-text">
-                                        <p>B-2-2. <br>消去したい要素に触れると、画像以外の文字・お絵描きが消去されます。</p>
+                                        <p>2. <br>消去したい要素に触れると、画像以外の文字・お絵描きが消去されます。</p>
                                     </div>
                                 </div>
                             </div>
@@ -1526,10 +1524,10 @@
                     </div>
 
                     <div class="procedure-item">
-                        <h4 id="export-canvas">9. キャンバスを画像で書き出す</h4>
+                        <h4 id="export-canvas">9. キャンバスを画像で書きだす</h4>
                         <div class="procedure-steps">
                             <div class="step-with-subsection">
-                                <h5 class="step-subsection-title">A. キャンバスを書き出す</h5>
+                                <h5 class="step-subsection-title">A. キャンバスを書きだす</h5>
                                 <div class="step-with-image">
                                     <div class="step-image">
                                         <img src="https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-usage-export-1.png"
@@ -1562,7 +1560,7 @@
                                 </div>
                             </div>
                             <div class="step-with-subsection new-content">
-                                <h5 class="step-subsection-title">B. トランスクリプトを書き出す</h5>
+                                <h5 class="step-subsection-title">B. トランスクリプトを書きだす</h5>
                                 <div class="step-with-image">
                                     <div class="step-image">
                                         <img src="https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-usage-export-csv-1.png"
@@ -1808,7 +1806,7 @@
                             <h4 id="term-export">書き出し（エクスポート）</h4>
                             <div class="procedure-steps">
                                 <div class="step-text">
-                                    <p>現在のシートを保存する機能。（<a href="/export-canvas">書き出す</a>）</p>
+                                    <p>現在のシートを保存する機能。（<a href="/export-canvas">書きだす</a>）</p>
                                 </div>
                             </div>
                         </div>
@@ -2860,7 +2858,7 @@
                     <li><a href="/add-images" title="カメラ撮影・ファイル選択・クリップボードからの画像貼り付け方法">6. 写真・画像を貼り付ける</a></li>
                     <li><a href="/drawing-tools" title="ペンツールを使ったキャンバスへの描画方法">7. お絵描きを行う</a></li>
                     <li><a href="/edit-elements" title="キャンバス上の要素の移動・削除・テキスト編集方法">8. 要素を移動・削除・編集する</a></li>
-                    <li><a href="/export-canvas" title="キャンバス内容を画像ファイルとしてエクスポートする方法">9. キャンバスを画像で書き出す</a></li>
+                    <li><a href="/export-canvas" title="キャンバス内容を画像ファイルとしてエクスポートする方法">9. キャンバスを画像で書きだす</a></li>
                 </ul>
             </div>
             <div id="mic-usage-tips-items" class="sub-items-group">
