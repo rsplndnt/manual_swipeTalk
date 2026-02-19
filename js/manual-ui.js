@@ -715,6 +715,29 @@
     // resizer
     if (resizer && sidebar) setupSidebarResizer(sidebar, resizer);
 
+    // ハッシュ形式の内部リンク処理（動的生成されるtoc-sublinkなど）
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+      // setupLeftTocSubitemsで処理済みのリンクは除外
+      if (link.closest('.toc-sublist')) return;
+      const href = link.getAttribute('href');
+      if (!href || href === '#' || href === '#top') return;
+      // TOC内のtoc-sublinkの場合のみ処理
+      if (!link.closest('.toc-section')) return;
+
+      e.preventDefault();
+      const targetEl = document.querySelector(href);
+      if (!targetEl) return;
+      const sectionEl = targetEl.closest('.step-section');
+      if (!sectionEl) return;
+      const sectionHash = `#${sectionEl.id}`;
+      activateSection(sectionHash, { scrollToTop: false });
+      updateUrlPath(href, { replace: false });
+      setTimeout(() => scrollToElementNoAnim(href), 150);
+      if (window.innerWidth <= MOBILE_BREAKPOINT) closeMobileSidebar();
+    });
+
     // 内部リンクの処理（パスベース対応）
     document.addEventListener('click', function(e) {
       const link = e.target.closest('a[href^="/"]');
@@ -1343,22 +1366,55 @@
         return idMap[normalizedHash] || null;
       };
 
+      // groupIdからセクションハッシュを逆引き（hrefがないbutton要素用）
+      const groupIdToSection = {};
+      Object.entries({
+        '#top': 'sub-items-top',
+        '#account-setup': 'account-setup-items',
+        '#screen-layout': 'screen-layout-items',
+        '#operation-guide': 'operation-guide-items',
+        '#mic-usage-tips': 'mic-usage-tips-items',
+        '#terminology': 'terminology-items',
+        '#faq': 'faq-items',
+        '#product-specs': 'product-specs-items',
+        '#whats-new': 'whats-new-items'
+      }).forEach(([k, v]) => { groupIdToSection[v] = k; });
+
       tocLinks.forEach(link => {
         const hash = link.getAttribute('href');
-        const groupId = getGroupIdByHash(hash);
-        
+        let groupId = getGroupIdByHash(hash);
+
+        // hrefがない場合（button要素）、data-group-id属性または
+        // 隣接するtoc-subitemsのIDからgroupIdを推測
+        if (!hash && !groupId) {
+          const section = link.closest('.toc-section');
+          if (section) {
+            const subitemsUl = section.querySelector('[id$="-toc-list"], .toc-sublist');
+            if (subitemsUl && subitemsUl.id) {
+              // whats-new-toc-list → whats-new-items に変換
+              const possibleGroupId = subitemsUl.id.replace('-toc-list', '-items');
+              if (groupIdToSection[possibleGroupId]) {
+                groupId = possibleGroupId;
+              }
+            }
+          }
+        }
+
         // デフォルトのクリックイベントを設定（すべてのリンクに必要）
+        // hrefがない場合はgroupIdからセクションハッシュを逆引き
+        const sectionHashForButton = groupId ? groupIdToSection[groupId] : null;
         const defaultClickHandler = (e) => {
           e.preventDefault();
           const href = link.getAttribute('href');
-          if (href) {
-            // パス形式（/xxx）をハッシュ形式（#xxx）に変換
-            const targetHash = href.startsWith('/') ? '#' + href.slice(1) : href;
+          const targetHash = href
+            ? (href.startsWith('/') ? '#' + href.slice(1) : href)
+            : sectionHashForButton;
+          if (targetHash) {
             const activateFn = window.activateSection || activateSection;
             activateFn(targetHash, { closeMobile: true, scrollToTop: true });
           }
         };
-        
+
         if (!groupId) {
           // groupIdがない場合
           link.addEventListener('click', defaultClickHandler);
