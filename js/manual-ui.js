@@ -64,6 +64,16 @@
     return '';
   })();
 
+  // パスからBASE_PATHと先頭/末尾の "/" を除去してIDを取得
+  function extractIdFromPath(pathname) {
+    if (!pathname) return '';
+    let p = pathname;
+    if (BASE_PATH && p.startsWith(BASE_PATH)) {
+      p = p.slice(BASE_PATH.length);
+    }
+    return p.replace(/^\/+/, '').replace(/\/+$/, '');
+  }
+
   function updateUrlPath(path, { replace = false } = {}) {
     if (!path) return;
 
@@ -790,20 +800,33 @@
     // ブラウザの戻る/進むボタン対応（popstateイベント）
     window.addEventListener('popstate', function(e) {
       const path = window.location.pathname;
-      if (path === '/' || path === '') {
+      const targetId = extractIdFromPath(path);
+
+      if (!targetId) {
+        // ルート（BASE_PATH以下にIDがない場合）→ TOPへ
         activateSection('#top', { scrollToTop: true, updateUrl: false });
       } else {
-        const targetId = path.slice(1); // "/" を除去
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
           const sectionElement = targetElement.closest('.step-section') || targetElement;
           if (sectionElement) {
             const sectionId = sectionElement.id;
-            activateSection(`#${sectionId}`, { scrollToTop: false, updateUrl: false });
-            setTimeout(() => {
-              scrollToElementNoAnim(`#${targetId}`);
-            }, 100);
+            const isSectionItself = sectionId === targetId;
+            activateSection(`#${sectionId}`, {
+              scrollToTop: isSectionItself,
+              updateUrl: false,
+              parentHasActiveChild: !isSectionItself,
+              activeSubHash: isSectionItself ? null : `#${targetId}`
+            });
+            if (!isSectionItself) {
+              setTimeout(() => {
+                scrollToElementNoAnim(`#${targetId}`);
+              }, 100);
+            }
           }
+        } else {
+          // IDに一致する要素がない場合はTOPへフォールバック
+          activateSection('#top', { scrollToTop: true, updateUrl: false });
         }
       }
       // popstateの場合もページビューを送信
@@ -946,9 +969,9 @@
         history.replaceState(null, '', cleanUrl);
       }
 
-      if (!path || path === '/' || path === '') return false;
-
-      const targetId = path.slice(1); // "/" を除去
+      // redirectPathがない場合はBASE_PATHを除去してIDを取得
+      const targetId = redirectPath ? path.slice(1) : extractIdFromPath(path);
+      if (!targetId) return false;
       const targetEl = document.getElementById(targetId);
       if (!targetEl) return false;
 
