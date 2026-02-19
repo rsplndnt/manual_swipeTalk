@@ -7,7 +7,8 @@
   <meta name="robots" content="noindex" />
   <link rel="icon" type="image/jpeg" href="https://lp.melbridge.mitsubishielectric.co.jp/hubfs/MelBridge_logo_1_RGB.jpg">
   <style>
-    body{font-family: -apple-system, system-ui, Segoe UI, Roboto, "Noto Sans JP", Hiragino Kaku Gothic ProN, Meiryo, sans-serif; margin:0; background:#f8fafc; color:#0f172a;}
+    /* SPAリダイレクト時はbodyを非表示にして一瞬のチラつきを防止 */
+    body{font-family: -apple-system, system-ui, Segoe UI, Roboto, "Noto Sans JP", Hiragino Kaku Gothic ProN, Meiryo, sans-serif; margin:0; background:#f8fafc; color:#0f172a; visibility:hidden;}
     .wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
     .card{background:#fff; border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,.08); padding:24px 28px; max-width:720px; width:100%;}
     h1{margin:0 0 8px; font-size:24px; color:#0071B8;}
@@ -32,18 +33,16 @@
           path = path.slice(base.length);
         }
 
-        // ルートまたは空の場合
+        // ルートまたは空の場合 → 「ページが見つかりません」を表示してからリダイレクト
         if (!path || path === '/') {
-          setTimeout(function(){
-            location.replace(location.origin + base + '/');
-          }, 1500);
+          document.documentElement.dataset.showFallback = '1';
         } else {
-          // パスを保持してindex.htmlにリダイレクト
-          setTimeout(function(){
-            location.replace(location.origin + base + '/' + '?redirect=' + encodeURIComponent(path));
-          }, 0);
+          // SPA内パス → 即座にリダイレクト（bodyは非表示のまま）
+          location.replace(location.origin + base + '/' + '?redirect=' + encodeURIComponent(path));
         }
-      }catch(_){}
+      }catch(_){
+        document.documentElement.dataset.showFallback = '1';
+      }
     })();
   </script>
   </head>
@@ -55,5 +54,15 @@
         <p><a class="btn" href="./">トップに戻る</a></p>
       </div>
     </div>
+    <script>
+      // フォールバック表示が必要な場合のみbodyを表示してリダイレクト
+      if (document.documentElement.dataset.showFallback === '1') {
+        document.body.style.visibility = 'visible';
+        setTimeout(function(){
+          var base = '/manual_swipeTalk_test';
+          location.replace(location.origin + base + '/');
+        }, 1500);
+      }
+    </script>
   </body>
   </html>
