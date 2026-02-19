@@ -1461,63 +1461,72 @@
         if (!sublist.classList.contains('toc-sublist')) {
           sublist.classList.add('toc-sublist');
         }
+        // サブリンクのクリックハンドラー（SPA遷移 + active管理）
+        const attachSubLinkHandler = (na) => {
+          na.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const anchor = na.getAttribute('href');
+            if (!anchor) return;
+            // パスをハッシュに変換（例: /whats-new → #whats-new）
+            const normalizedAnchor = anchor.startsWith('/') ? '#' + anchor.slice(1) : anchor;
+            // 対象セクションを特定して切替（右カラムと同様の挙動）
+            let sectionHash = '#top';
+            const anchorEl = document.querySelector(normalizedAnchor);
+            if (anchorEl) {
+              const sectionEl = anchorEl.closest && anchorEl.closest('.step-section');
+              if (sectionEl && sectionEl.id) sectionHash = `#${sectionEl.id}`;
+            } else {
+              const m2 = normalizedAnchor.match(/^#(section\d+)/i);
+              if (m2) sectionHash = `#${m2[1]}`;
+            }
+
+            // 強制状態をセット（1500ms程度維持）
+            if (forcedTocState.timer) clearTimeout(forcedTocState.timer);
+            forcedTocState.sectionHash = sectionHash;
+            forcedTocState.subHash = normalizedAnchor;
+            setScrollSyncManual(true);
+            forcedTocState.timer = setTimeout(() => {
+              forcedTocState.sectionHash = null;
+              forcedTocState.subHash = null;
+              setScrollSyncManual(false);
+              triggerScrollSyncUpdate();
+            }, 1500);
+
+            applySubLinkActiveState(sectionHash, normalizedAnchor);
+            activateSection(sectionHash, {
+              scrollToTop: false,
+              parentHasActiveChild: true,
+              activeSubHash: normalizedAnchor
+            });
+
+            // 画像読み込みを待ってからスクロール
+            setTimeout(() => scrollToElement(normalizedAnchor), 150);
+            if (window.innerWidth <= MOBILE_BREAKPOINT) closeMobileSidebar();
+          });
+        };
+
         if (!sublist.hasChildNodes()) {
+          // サブリストが空の場合：右サブグループからリンクを生成
           items.forEach(a => {
             const li = document.createElement('li');
             const na = document.createElement('a');
             na.href = a.getAttribute('href');
-            // section1の場合は数字を残す、それ以外は数字を削除
             const text = a.textContent || '';
             if (groupId === 'account-setup-items') {
-              // アカウント設定セクションは番号をそのまま残す
-              na.textContent = text.trim(); // 数字を残す
+              na.textContent = text.trim();
             } else {
-              // その他のセクションは数字を削除
-              na.textContent = text.replace(/^\s*\d+[\.\)\s-]*\s*/, '').trim(); // 数字を削除
+              na.textContent = text.replace(/^\s*\d+[\.\)\s-]*\s*/, '').trim();
             }
-            na.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              const anchor = na.getAttribute('href');
-              if (!anchor) return;
-              // パスをハッシュに変換（例: /whats-new → #whats-new）
-              const normalizedAnchor = anchor.startsWith('/') ? '#' + anchor.slice(1) : anchor;
-              // 対象セクションを特定して切替（右カラムと同様の挙動）
-              let sectionHash = '#top';
-              const anchorEl = document.querySelector(normalizedAnchor);
-              if (anchorEl) {
-                const sectionEl = anchorEl.closest && anchorEl.closest('.step-section');
-                if (sectionEl && sectionEl.id) sectionHash = `#${sectionEl.id}`;
-              } else {
-                const m2 = normalizedAnchor.match(/^#(section\d+)/i);
-                if (m2) sectionHash = `#${m2[1]}`;
-              }
-
-              // 強制状態をセット（1500ms程度維持）
-              if (forcedTocState.timer) clearTimeout(forcedTocState.timer);
-              forcedTocState.sectionHash = sectionHash;
-              forcedTocState.subHash = normalizedAnchor;
-              setScrollSyncManual(true);
-              forcedTocState.timer = setTimeout(() => {
-                forcedTocState.sectionHash = null;
-                forcedTocState.subHash = null;
-                setScrollSyncManual(false);
-                triggerScrollSyncUpdate();
-              }, 1500);
-
-              applySubLinkActiveState(sectionHash, normalizedAnchor);
-              activateSection(sectionHash, {
-                scrollToTop: false,
-                parentHasActiveChild: true,
-                activeSubHash: normalizedAnchor
-              });
-
-              // 画像読み込みを待ってからスクロール
-              setTimeout(() => scrollToElement(normalizedAnchor), 150);
-              if (window.innerWidth <= MOBILE_BREAKPOINT) closeMobileSidebar();
-            });
+            attachSubLinkHandler(na);
             li.appendChild(na);
             sublist.appendChild(li);
+          });
+        } else {
+          // サブリストに既存の子要素がある場合（whats-new.js等で動的生成済み）
+          // クリックハンドラーのみ付与
+          sublist.querySelectorAll('a').forEach(na => {
+            attachSubLinkHandler(na);
           });
         }
 
@@ -1679,9 +1688,15 @@
       const normalizedSection = (sectionHash || '').trim();
       const requestedSub = subHash ? (subHash.startsWith('#') ? subHash : `#${subHash}`) : '';
 
-      const sectionLink = normalizedSection
-        ? document.querySelector(`.toc .toc-link[href="${normalizedSection}"]`)
-        : null;
+      // ハッシュ形式（#xxx）とパス形式（/xxx）の両方で検索
+      let sectionLink = null;
+      if (normalizedSection) {
+        sectionLink = document.querySelector(`.toc .toc-link[href="${normalizedSection}"]`);
+        if (!sectionLink && normalizedSection.startsWith('#')) {
+          // #xxx → /xxx に変換して再検索
+          sectionLink = document.querySelector(`.toc .toc-link[href="/${normalizedSection.slice(1)}"]`);
+        }
+      }
       const tocSectionEl = sectionLink ? sectionLink.closest('.toc-section') : null;
       const availableSubLinks = tocSectionEl ? Array.from(tocSectionEl.querySelectorAll('.toc-sublist a')) : [];
       const cachedSub = tocLastActiveSub.get(normalizedSection) || '';
@@ -1703,7 +1718,9 @@
 
       document.querySelectorAll('.toc .toc-link').forEach(link => {
         const href = link.getAttribute('href');
-        const isTarget = normalizedSection && href === normalizedSection;
+        // ハッシュ形式とパス形式の両方に対応（#xxx と /xxx を同一視）
+        const normalizedHref = href ? (href.startsWith('/') ? '#' + href.slice(1) : href) : '';
+        const isTarget = normalizedSection && (href === normalizedSection || normalizedHref === normalizedSection);
         if (!isTarget) {
           link.classList.remove('active');
           link.classList.remove('has-active-child');
