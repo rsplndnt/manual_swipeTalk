@@ -1571,7 +1571,9 @@
       if (!sublist) return;
       sublist.classList.toggle('show', !!open);
       if (toggleIcon) {
-        toggleIcon.textContent = open ? 'expand_less' : 'expand_more';
+        // textContent切り替えではなくCSS rotateで向きを変える（360度回転防止）
+        toggleIcon.textContent = 'expand_more';
+        toggleIcon.style.transform = open ? 'rotate(180deg)' : '';
       }
     }
 
