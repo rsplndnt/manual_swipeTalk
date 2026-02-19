@@ -14,43 +14,31 @@ const _allWhatsNewData = [
       {
         heading: "キーボード入力モードの追加",
         text: "音声入力に加え、キーボードからテキストを入力してしゃべり描きができるようになりました。<span class=\"button-label\">設定</span>から入力方式を<span class=\"button-label\">キーボード入力</span>に切り替えて使用します。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-keyboard-input.png",
         link: "/use-swipe-talk"
       },
       {
         heading: "テキストのみ消去できる消しゴム機能",
         text: "画像保護消しゴムを追加しました。写真や図面はそのまま残し、文字やお絵描きのみを選択的に消去できます。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-eraser-protect.png",
         link: "/edit-elements"
       },
       {
         heading: "表示切替機能の追加",
         text: "キャンバスとトランスクリプトの表示モードを切り替えられるようになりました。並列表示・キャンバスのみ表示・トランスクリプトのみ表示の3モードから選択できます。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-view-switch.png",
         link: "/canvas-area"
-      },
-      {
-        heading: "シート管理の改善（100枚対応）",
-        text: "保持できるシートの上限を10枚から100枚に拡張しました。100枚に達した場合、最終更新日が古いシートから非表示になります。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-sheet-100.png",
-        link: "/create-new-sheet"
       },
       {
         heading: "設定メニューの追加",
         text: "しゃべり描きの入力方式（音声入力／キーボード入力）や文字サイズを設定画面から変更できるようになりました。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-settings.png",
         link: "/canvas-area"
       },
       {
         heading: "キャンバス画像の保存機能",
         text: "シート管理エリアから、開いているシートのキャンバスエリアをPNG画像として保存できるようになりました。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-canvas-export.png",
         link: "/export-canvas"
       },
       {
         heading: "しゃべり描き文字の編集機能",
         text: "キャンバス上のしゃべり描き文字をダブルタップしてテキストを直接編集できるようになりました。編集後、翻訳文・折り返し翻訳文も自動で更新されます。",
-        image: "https://lp.melbridge.mitsubishielectric.co.jp/hubfs/images/manual/swipeTalk/img-update-text-edit.png",
         link: "/edit-elements"
       },
       {
