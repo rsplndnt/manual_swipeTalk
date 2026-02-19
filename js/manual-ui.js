@@ -74,6 +74,32 @@
     return p.replace(/^\/+/, '').replace(/\/+$/, '');
   }
 
+  // hrefからBASE_PATHを除去して "/" 始まりのパスを返す（SPA処理用）
+  function stripBasePath(href) {
+    if (!href) return href;
+    if (BASE_PATH && href.startsWith(BASE_PATH + '/')) {
+      return href.slice(BASE_PATH.length);
+    }
+    if (BASE_PATH && href === BASE_PATH) {
+      return '/';
+    }
+    return href;
+  }
+
+  // DOM上の全 a[href^="/"] にBASE_PATHをプリペンド（右クリック→新しいタブ対策）
+  // 外部（whats-new.js等）からも呼べるようグローバルに公開
+  function applyBasePathToLinks(root) {
+    if (!BASE_PATH) return;
+    const links = (root || document).querySelectorAll('a[href^="/"]');
+    links.forEach(function(a) {
+      const href = a.getAttribute('href');
+      if (href && !href.startsWith(BASE_PATH + '/') && href !== BASE_PATH) {
+        a.setAttribute('href', BASE_PATH + href);
+      }
+    });
+  }
+  window.applyBasePathToLinks = applyBasePathToLinks;
+
   function updateUrlPath(path, { replace = false } = {}) {
     if (!path) return;
 
@@ -603,6 +629,9 @@
     // 左TOCにサブ項目（右カラムの内容）を生成し、Expand More/Lessで開閉・永続化
     setupLeftTocSubitems({ tocLinks, subGroups });
 
+    // 右クリック→新しいタブ対策: 全内部リンクにBASE_PATHをプリペンド
+    applyBasePathToLinks();
+
     // タブクリック -> セクション切替
     tabs.forEach(tab => {
       tab.addEventListener('click', () => {
@@ -736,42 +765,14 @@
         return;
       }
 
-      const href = link.getAttribute('href');
+      const rawHref = link.getAttribute('href');
+      // BASE_PATHを除去してSPA用パスを取得
+      const href = stripBasePath(rawHref);
       if (!href || href === '/') {
         // ルートの場合は最初のセクションに遷移
         e.preventDefault();
         activateSection('#top', { scrollToTop: true });
         updateUrlPath('/', { replace: false });
-        return;
-      }
-
-      // target="_blank"の場合は新しいタブで開く
-      if (link.getAttribute('target') === '_blank') {
-        e.preventDefault();
-        const baseUrl = window.location.origin;
-        const newUrl = `${baseUrl}${href}`;
-        const newWindow = window.open(newUrl, '_blank');
-
-        // 新しいウィンドウが読み込まれた後に表示処理を実行
-        if (newWindow) {
-          newWindow.addEventListener('load', function() {
-            setTimeout(() => {
-              const targetId = href.slice(1); // "/" を除去
-              const targetElement = newWindow.document.getElementById(targetId);
-              if (targetElement) {
-                const sectionElement = targetElement.closest('.step-section') || targetElement;
-                if (sectionElement) {
-                  // セクションを表示（直接DOM操作）
-                  const allSections = newWindow.document.querySelectorAll('.step-section');
-                  allSections.forEach(section => { section.classList.add('is-hidden'); });
-                  sectionElement.classList.remove('is-hidden');
-                  // 目的位置へ瞬時に移動
-                  scrollToElementNoAnim(`#${targetId}`, newWindow.document);
-                }
-              }
-            }, 300);
-          });
-        }
         return;
       }
 
@@ -1337,8 +1338,9 @@
       const state = loadTocOpenState();
       const getGroupIdByHash = (hash) => {
         if (!hash) return null;
-        // パス形式（/xxx）をハッシュ形式（#xxx）に変換
-        const normalizedHash = hash.startsWith('/') ? '#' + hash.slice(1) : hash;
+        // BASE_PATHを除去してからパス形式（/xxx）をハッシュ形式（#xxx）に変換
+        const strippedHash = stripBasePath(hash);
+        const normalizedHash = strippedHash.startsWith('/') ? '#' + strippedHash.slice(1) : strippedHash;
         if (normalizedHash === '#top') return 'sub-items-top';
         // 新しいID形式に対応
         const idMap = {
@@ -1393,7 +1395,8 @@
         const sectionHashForButton = groupId ? groupIdToSection[groupId] : null;
         const defaultClickHandler = (e) => {
           e.preventDefault();
-          const href = link.getAttribute('href');
+          const rawHref = link.getAttribute('href');
+          const href = stripBasePath(rawHref);
           const targetHash = href
             ? (href.startsWith('/') ? '#' + href.slice(1) : href)
             : sectionHashForButton;
@@ -1454,9 +1457,10 @@
           na.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const anchor = na.getAttribute('href');
-            if (!anchor) return;
-            // パスをハッシュに変換（例: /whats-new → #whats-new）
+            const rawAnchor = na.getAttribute('href');
+            if (!rawAnchor) return;
+            // BASE_PATHを除去してからハッシュに変換（例: /manual_swipeTalk_test/whats-new → #whats-new）
+            const anchor = stripBasePath(rawAnchor);
             const normalizedAnchor = anchor.startsWith('/') ? '#' + anchor.slice(1) : anchor;
             // 対象セクションを特定して切替（右カラムと同様の挙動）
             let sectionHash = '#top';
@@ -1546,10 +1550,12 @@
             saveTocOpenState(state);
           } else {
             // サブ項目がない場合のみ画面遷移
-            const href = link.getAttribute('href');
+            const rawHref = link.getAttribute('href');
+            const href = stripBasePath(rawHref);
             if (href) {
+              const targetHash = href.startsWith('/') ? '#' + href.slice(1) : href;
               const activateFn = window.activateSection || activateSection;
-              activateFn(href, { closeMobile: true, scrollToTop: true });
+              activateFn(targetHash, { closeMobile: true, scrollToTop: true });
             }
           }
         });
@@ -1685,30 +1691,42 @@
         if (!sectionLink && normalizedSection.startsWith('#')) {
           // #xxx → /xxx に変換して再検索
           sectionLink = document.querySelector(`.toc .toc-link[href="/${normalizedSection.slice(1)}"]`);
+          // BASE_PATH付きhrefでも再検索
+          if (!sectionLink && BASE_PATH) {
+            sectionLink = document.querySelector(`.toc .toc-link[href="${BASE_PATH}/${normalizedSection.slice(1)}"]`);
+          }
         }
       }
       const tocSectionEl = sectionLink ? sectionLink.closest('.toc-section') : null;
       const availableSubLinks = tocSectionEl ? Array.from(tocSectionEl.querySelectorAll('.toc-sublist a')) : [];
       const cachedSub = tocLastActiveSub.get(normalizedSection) || '';
 
+      // hrefをハッシュ形式に正規化（BASE_PATH除去 + /xxx → #xxx変換）
+      const normalizeSubHref = (h) => {
+        if (!h) return '';
+        const s = stripBasePath(h);
+        return s.startsWith('/') ? '#' + s.slice(1) : s;
+      };
+
       let resolvedSub = requestedSub;
       if (!resolvedSub && preserveExisting && cachedSub) {
         resolvedSub = cachedSub;
       }
       if (!resolvedSub && fallbackToFirst && availableSubLinks.length) {
-        resolvedSub = availableSubLinks[0].getAttribute('href') || '';
+        resolvedSub = normalizeSubHref(availableSubLinks[0].getAttribute('href'));
       }
-      if (resolvedSub && availableSubLinks.length && !availableSubLinks.some(a => a.getAttribute('href') === resolvedSub)) {
+      if (resolvedSub && availableSubLinks.length && !availableSubLinks.some(a => normalizeSubHref(a.getAttribute('href')) === resolvedSub)) {
         if (fallbackToFirst && availableSubLinks.length) {
-          resolvedSub = availableSubLinks[0].getAttribute('href') || '';
+          resolvedSub = normalizeSubHref(availableSubLinks[0].getAttribute('href'));
         } else if (!preserveExisting) {
           resolvedSub = '';
         }
       }
 
       document.querySelectorAll('.toc .toc-link').forEach(link => {
-        const href = link.getAttribute('href');
-        // ハッシュ形式とパス形式の両方に対応（#xxx と /xxx を同一視）
+        const rawHref = link.getAttribute('href');
+        // BASE_PATHを除去してからハッシュ形式とパス形式の両方に対応（#xxx と /xxx を同一視）
+        const href = stripBasePath(rawHref);
         const normalizedHref = href ? (href.startsWith('/') ? '#' + href.slice(1) : href) : '';
         const isTarget = normalizedSection && (href === normalizedSection || normalizedHref === normalizedSection);
         if (!isTarget) {
@@ -1727,7 +1745,7 @@
 
       if (resolvedSub) {
         document.querySelectorAll('.toc .toc-sublist a').forEach(a => {
-          const isMatch = a.getAttribute('href') === resolvedSub;
+          const isMatch = normalizeSubHref(a.getAttribute('href')) === resolvedSub;
           a.classList.toggle('active', isMatch);
         });
         tocLastActiveSub.set(normalizedSection, resolvedSub);

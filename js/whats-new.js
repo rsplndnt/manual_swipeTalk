@@ -87,6 +87,11 @@ class WhatsNewManager {
 
     container.innerHTML = html;
 
+    // 右クリック→新しいタブ対策: 動的リンクにBASE_PATHを付与
+    if (typeof window.applyBasePathToLinks === 'function') {
+      window.applyBasePathToLinks(container);
+    }
+
     // イベントリスナー設定
     this.setupMainPageEvents();
     this.setupInlineContentPagination();
