@@ -58,10 +58,9 @@ class WhatsNewManager {
             `;
           }
 
-          // リンクがある場合は表示（BASE_PATHを付与して外部タブで開く）
+          // リンクがある場合は表示（SPA内セクション遷移）
           if (content.link) {
-            const linkPath = (typeof BASE_PATH !== 'undefined' ? BASE_PATH : '') + content.link;
-            html += `<p class="news-content-link"><a href="${linkPath}" target="_blank" rel="noopener noreferrer">マニュアルを確認する <i class="material-icons">open_in_new</i></a></p>`;
+            html += `<p class="news-content-link"><a href="${content.link}">マニュアルを確認する <i class="material-icons">arrow_forward</i></a></p>`;
           }
 
           // チケットIDを併記（確認用）
@@ -113,8 +112,7 @@ class WhatsNewManager {
   // enableLink: true = マニュアルサイト内（リンクあり）, false = モーダル（リンクなし）
   renderTextWithLink(text, link, enableLink) {
     if (enableLink && link) {
-      const linkPath = (typeof BASE_PATH !== 'undefined' ? BASE_PATH : '') + link;
-      return `<a href="${linkPath}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+      return `<a href="${link}">${text}</a>`;
     }
     return text;
   }
