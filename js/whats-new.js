@@ -8,7 +8,6 @@ class WhatsNewManager {
     this.currentPage = 1;
     this.currentModalIndex = 0;
     this.currentContentIndex = 0;
-    this.currentAppModalContentIndex = 0; // アプリスタイルモーダル用のコンテンツインデックス
     this.init();
   }
 
@@ -456,68 +455,6 @@ class WhatsNewManager {
     });
   }
 
-  // テスト用: 日付選択リストを表示
-  showDateList() {
-    const modal = document.getElementById('whatsNewModal');
-    const modalBody = document.querySelector('.whats-new-modal-body');
-
-    if (!modal || !modalBody) return;
-
-    let listHtml = `
-      <div class="whats-new-modal-body-content">
-        <h2 class="modal-date-list-title">新着情報を選択してください</h2>
-        <p class="modal-date-list-description">※ この画面はテスト用です。実際の運用では最新の新着情報が自動的に表示されます。</p>
-        <div class="modal-date-list">
-    `;
-
-    whatsNewData.forEach((item, index) => {
-      listHtml += `
-        <button class="modal-date-list-item" data-index="${index}">
-          <div class="modal-date-list-item-header">
-            <span class="news-item-date">${item.date}</span>
-            <span class="news-item-badge">v${item.version}</span>
-          </div>
-          <div class="modal-date-list-item-title">${item.title}</div>
-          ${item.contents.length > 1 ? `<span class="modal-date-list-item-count">${item.contents.length}件のコンテンツ</span>` : ''}
-        </button>
-      `;
-    });
-
-    listHtml += `
-        </div>
-        <div class="modal-date-list-footer">
-          <button class="modal-date-list-cancel" data-action="cancel-date-list">
-            <i class="material-icons">close</i>
-            <span>キャンセル</span>
-          </button>
-        </div>
-      </div>
-    `;
-
-    modalBody.innerHTML = listHtml;
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-
-    // 日付リストのイベントリスナー設定
-    this.setupDateListEvents();
-  }
-
-  setupDateListEvents() {
-    document.querySelectorAll('.modal-date-list-item').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const index = parseInt(e.currentTarget.dataset.index);
-        this.openModal(index, 0);
-      });
-    });
-
-    const cancelBtn = document.querySelector('[data-action="cancel-date-list"]');
-    if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
-        this.closeModal();
-      });
-    }
-  }
-
   renderContentPagination(totalContents) {
     const isLastPage = this.currentContentIndex === totalContents - 1;
 
@@ -606,8 +543,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (typeof whatsNewData !== 'undefined' && whatsNewData.length > 0) {
     window.whatsNewManager = new WhatsNewManager();
-    console.log('WhatsNewManager initialized successfully');
-  } else {
-    console.error('新着情報データが見つかりません');
   }
 });

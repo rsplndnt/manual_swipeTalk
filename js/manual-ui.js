@@ -156,8 +156,6 @@
     }
   }
 
-  // 後方互換性のため、古い関数名も残す
-  const updateUrlHash = updateUrlPath;
 
   /* ===== 03) smooth scroll engine ===== */
   const DEFAULT_SCROLL_DURATION = 315;
@@ -642,16 +640,6 @@
         }
       });
     }
-
-    // 左TOCクリック - 基本のイベントリスナーは削除（setupLeftTocSubitems内で設定）
-    // tocLinks.forEach(a => {
-    //   a.addEventListener('click', (e) => {
-    //     e.preventDefault();
-    //     const href = a.getAttribute('href');
-    //     if (!href) return;
-    //     activateSection(href, { closeMobile: true, scrollToTop: true });
-    //   });
-    // });
 
     // 右中項目クリック（スムーススクロール）
     subLinks.forEach(a => {
@@ -1807,7 +1795,7 @@
 
       if (opts.updateUrl !== false) {
         const hashForUrl = (activeSubHash && activeSubHash.trim()) || normalizedTarget;
-        updateUrlHash(hashForUrl);
+        updateUrlPath(hashForUrl);
       }
     }
 
@@ -1844,7 +1832,7 @@
         }, 350); // スクロールアニメーション完了後
       }
       
-      updateUrlHash(hash, { replace: true });
+      updateUrlPath(hash, { replace: true });
     }
 
     // スクロールアニメーションなしで瞬時に目的位置へ移動
@@ -1889,7 +1877,7 @@
             }, 1200);
           }, 50);
         }
-        updateUrlHash(hash, { replace: true });
+        updateUrlPath(hash, { replace: true });
       }
     }
 
@@ -1929,19 +1917,6 @@
     const MIN = 240, MAX = 520;
     let dragging = false, startX = 0, startW = sidebar.getBoundingClientRect().width;
     
-    // 既存のlocalStorageデータをクリア
-    try {
-      localStorage.removeItem(SIDEBAR_WIDTH_KEY);
-    } catch (e) {}
-    
-    // localStorage からの読み込みを無効化（常に初期値350pxを使用）
-    // try {
-    //   const saved = Number(localStorage.getItem(SIDEBAR_WIDTH_KEY) || 0);
-    //   if (saved && saved >= MIN && saved <= MAX) {
-    //     sidebar.style.flexBasis = saved + 'px';
-    //     sidebar.style.maxWidth = saved + 'px';
-    //   }
-    // } catch (e) {}
     resizer.addEventListener('mousedown', (e) => {
       if (window.innerWidth <= MOBILE_BREAKPOINT) return;
       dragging = true; startX = e.clientX; startW = sidebar.getBoundingClientRect().width;
@@ -1955,8 +1930,6 @@
     window.addEventListener('mouseup', () => {
       if (!dragging) return;
       dragging = false; document.body.style.userSelect = ''; document.body.style.cursor = '';
-      // localStorage への保存を無効化
-      // try { const w = Math.round(sidebar.getBoundingClientRect().width); localStorage.setItem(SIDEBAR_WIDTH_KEY, String(w)); } catch (e) {}
     });
 
     // touch support
@@ -1973,8 +1946,6 @@
     window.addEventListener('touchend', () => {
       if (!dragging) return;
       dragging = false; document.body.style.userSelect = '';
-      // localStorage への保存を無効化
-      // try { const w = Math.round(sidebar.getBoundingClientRect().width); localStorage.setItem(SIDEBAR_WIDTH_KEY, String(w)); } catch (e) {}
     });
   }
 
@@ -2330,7 +2301,6 @@
     
     // 重複実行を防ぐ（既に内容がある場合はスキップ）
     if (isPrintTOCGenerating || tocContainer.children.length > 0) {
-      console.log('Skipping TOC generation: already generating or has content'); // デバッグ用
       return;
     }
     
@@ -2338,20 +2308,16 @@
     
     // 既存の内容をクリア
     tocContainer.innerHTML = '';
-    console.log('Cleared container, current HTML:', tocContainer.innerHTML); // デバッグ用
     
     // TOCセクションが生成されるまで待機
     setTimeout(() => {
       // 再度チェック（タイミングの問題を回避）
       if (tocContainer.children.length > 0) {
-        console.log('Content already added, skipping'); // デバッグ用
         isPrintTOCGenerating = false;
         return;
       }
       
       const tocSections = document.querySelectorAll('.toc-section');
-      console.log('Found toc-sections:', tocSections.length); // デバッグ用
-      console.log('Container before adding:', tocContainer.children.length, 'children'); // デバッグ用
     
     tocSections.forEach((section, index) => {
       const tocLink = section.querySelector('.toc-link');
@@ -2409,8 +2375,6 @@
       tocContainer.appendChild(printSection);
     });
     
-    console.log('Final container children:', tocContainer.children.length); // デバッグ用
-    console.log('Final container HTML length:', tocContainer.innerHTML.length); // デバッグ用
     
     // フラグをリセット（次回の印刷に備えて）
     setTimeout(() => {
@@ -2431,7 +2395,6 @@
     const tocContainer = document.querySelector('.print-toc-content');
     if (tocContainer) {
       tocContainer.innerHTML = '';
-      console.log('Cleared TOC after print'); // デバッグ用
     }
     isPrintTOCGenerating = false;
   });
@@ -2588,24 +2551,18 @@
     }
 
     function internalJumpTo(anchorId, sectionHash) {
-      console.log(`🎯 ジャンプ開始: anchorId="${anchorId}", sectionHash="${sectionHash}"`);
-      console.log(`📝 searchInput.value="${searchInput.value}"`);
 
       const safeSectionHash = (sectionHash && String(sectionHash).trim()) || '#top';
       const sectionEl = document.querySelector(safeSectionHash);
       if (sectionEl) {
         const terms = tokenize(searchInput.value || '');
-        console.log(`🔍 tokenize結果:`, terms);
         // セクション内のハイライトのみをクリア
         clearContentHighlights(sectionEl);
         if (terms.length) {
-          console.log(`✨ ハイライト実行: terms=${terms.join(', ')}`);
           highlightSectionTerms(sectionEl, terms);
         } else {
-          console.log(`⚠️ terms が空のためハイライトスキップ`);
         }
       } else {
-        console.log(`❌ sectionEl が見つかりません: ${safeSectionHash}`);
       }
       
       // requestAnimationFrame × 2に変更
@@ -2619,25 +2576,19 @@
             el = document.getElementById(anchorId);
           }
           if (el) {
-            console.log(`✅ 要素を発見 (getElementById):`, el);
           } else {
-            console.log(`❌ getElementById("${anchorId}") で要素が見つかりません`);
             
             // 2. data-anchor-id属性で検索
             if (anchorId) {
               el = document.querySelector(`[data-anchor-id="${anchorId}"]`);
             }
             if (el) {
-              console.log(`✅ 要素を発見 (data-anchor-id):`, el);
             } else {
-              console.log(`❌ data-anchor-id="${anchorId}" で要素が見つかりません`);
               
               // 3. sectionHashで検索
               el = document.querySelector(safeSectionHash);
               if (el) {
-                console.log(`✅ 要素を発見 (sectionHash):`, el);
               } else {
-                console.error(`❌ 要素が見つかりません`);
                 return;
               }
             }
@@ -2648,7 +2599,6 @@
             const h4 = el.querySelector('h4');
             if (h4) {
               el = h4;
-              console.log(`✅ procedure-item内のh4を使用:`, el);
             }
           } else if (el.tagName !== 'H4') {
             const directH4 = el.querySelector && el.querySelector('h4');
@@ -2656,7 +2606,6 @@
             const h4 = directH4 || (fromClosest ? fromClosest.querySelector('h4') : null);
             if (h4) {
               el = h4;
-              console.log(`✅ h4要素に変更:`, el);
             }
           }
           
@@ -2690,7 +2639,7 @@
 
           // URLのアンカーも更新（置換）
           if (anchorId) {
-            updateUrlHash(`#${anchorId}`, { replace: true });
+            updateUrlPath(`#${anchorId}`, { replace: true });
           }
         });
       });
@@ -2699,13 +2648,6 @@
     return { search: internalSearchAndRender, jumpTo: internalJumpTo, clearSearch: clearAll };
 
     /* ---------- helpers for index/search ---------- */
-    // ひらがなをカタカナに変換する関数
-    function normalizeKana(str) {
-      if (!str) return '';
-      return str.replace(/[\u3041-\u3096]/g, function(match) {
-        return String.fromCharCode(match.charCodeAt(0) + 0x60);
-      });
-    }
 
     function buildIndex(sectionEls, procSelector) {
       const idx = [];
@@ -2756,7 +2698,6 @@
           });
         });
       });
-      console.log(`📚 検索インデックス構築完了: ${idx.length}件`);
       return idx;
     }
     function tokenize(q) {
@@ -2777,7 +2718,7 @@
       words.forEach(word => {
         if (word.length >= 4) {
           for (let i = 0; i <= word.length - 3; i++) {
-            const ngram = word.substr(i, 3);
+            const ngram = word.substring(i, i + 3);
             if (!tokens.includes(ngram)) tokens.push(ngram);
           }
         }
@@ -2940,41 +2881,6 @@
     });
   }
 
-
-  /* ---------------- モバイル時のレイアウト調整 ---------------- */
-  // adjustMobileLayoutは無効化（HTMLの順序をそのまま使用）
-  // function adjustMobileLayout() {
-  //   const isMobile = window.innerWidth <= 768;
-  //   
-  //   document.querySelectorAll('.step-with-image').forEach(container => {
-  //     const noteCard = container.querySelector('.step-text .note-card');
-  //     const stepText = container.querySelector('.step-text');
-  //     
-  //     if (noteCard && stepText) {
-  //       if (isMobile) {
-  //         // モバイル時：note-cardをstep-with-imageの最後に移動
-  //         if (noteCard.parentElement === stepText) {
-  //           container.appendChild(noteCard);
-  //           noteCard.dataset.movedFromText = 'true';
-  //         }
-  //       } else {
-  //         // デスクトップ時：note-cardを元の位置（step-text内）に戻す
-  //         if (noteCard.dataset.movedFromText === 'true') {
-  //           stepText.appendChild(noteCard);
-  //           delete noteCard.dataset.movedFromText;
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
-  // 
-  // // 初回実行とリサイズ時に実行
-  // adjustMobileLayout();
-  // let resizeTimer;
-  // window.addEventListener('resize', () => {
-  //   clearTimeout(resizeTimer);
-  //   resizeTimer = setTimeout(adjustMobileLayout, 250);
-  // });
 
   // OSS License Table Toggle
   function initOssTableToggle() {
