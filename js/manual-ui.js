@@ -1440,7 +1440,8 @@
         if (!section || !section.classList.contains('toc-section')) return;
         
         // リンク内にトグルアイコンがなければ追加（製品仕様セクションは除外）
-        let toggleIcon = link.querySelector('.toc-toggle-icon');
+        // 既存のchevronアイコン（toc-chevron）も確認して重複追加を防ぐ
+        let toggleIcon = link.querySelector('.toc-toggle-icon') || link.querySelector('.toc-chevron');
         const isProductSpecs = link.getAttribute('href') === '#product-specs';
         if (!toggleIcon && items.length > 0 && !isProductSpecs) {
           toggleIcon = document.createElement('span');
@@ -1449,12 +1450,16 @@
           link.appendChild(toggleIcon);
         }
 
-        // 左TOCにサブリストを生成
-        let sublist = section.querySelector('.toc-sublist');
+        // 左TOCにサブリストを生成（既存のtoc-subitemsも検索して重複を防ぐ）
+        let sublist = section.querySelector('.toc-sublist') || section.querySelector('.toc-subitems');
         if (!sublist) {
           sublist = document.createElement('ul');
           sublist.className = 'toc-sublist';
           section.appendChild(sublist);
+        }
+        // 統一のため既存のtoc-subitemsにもtoc-sublistクラスを追加
+        if (!sublist.classList.contains('toc-sublist')) {
+          sublist.classList.add('toc-sublist');
         }
         if (!sublist.hasChildNodes()) {
           items.forEach(a => {
