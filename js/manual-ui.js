@@ -279,11 +279,11 @@
       const text = p.textContent;
       // A-1, B-2, C-3などのパターンを検出
       const match = text.match(/^([A-C]-([0-9]+)\.\s*)/);
-      
+
       if (match) {
-        const fullMatch = match[1]; // A-1. など
         const numberOnly = match[2]; // 1 など（数字のみ）
-        const remainingText = text.replace(fullMatch, '').trim();
+        // innerHTML から番号プレフィックスと<br>を除去（HTMLタグを保持）
+        const remainingHtml = p.innerHTML.replace(/^[A-C]-[0-9]+\.\s*(?:<br\s*\/?>)?\s*/, '').trim();
         
         // 親のstep-textを取得
         const stepTextContainer = p.parentElement;
@@ -300,7 +300,7 @@
         
         // li要素を作成
         const li = document.createElement('li');
-        li.innerHTML = `<span class="step-number-label">${numberOnly}.</span> ${remainingText}`;
+        li.innerHTML = `<span class="step-number-label">${numberOnly}.</span> ${remainingHtml}`;
         ol.appendChild(li);
         
         // 元のp要素を削除
